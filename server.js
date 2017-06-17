@@ -1,48 +1,81 @@
-//server dependencies 
-var express = require("express");
+//dependencies
+var express = require('express');
 var bodyParser = require("body-parser");
-var logger = require("morgan");
 var mongoose = require("mongoose");
 
-//add in schema to require
-// var X = require("./models/");
+var Article = require("./models/Article.js");
 
-//creating an express app
+mongoose.Promise = Promise;
+
 var app = express();
-var PORT = process.env.PORT || 3000;
 
-//running Morgan for logging
-app.use(logger("dev"));
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.text());
-app.use(bodyParser.json({type: "application/vnd.api+json"}));
+app.use(bodyParser.json({ type: "application/vnd.api+json" }));
 
 app.use(express.static("./public"));
 
+mongoose.connect('mongodb://localhost/nytHomework19');
 
-//mongodb config
-mongoose.connect("mongodb://localhost/homework19");
 var db = mongoose.connection;
 
-db.on("error", function(err) {
-	console.log("Mongoose Error: ", err);
+//mongoose errors
+db.on("error", function(error) {
+  console.log("Mongoose Error: ", error);
 });
 
+//mongoose success
 db.once("open", function() {
-	console.log("Mongoose connection successful");
+  console.log("Mongoose connection successful.");
 });
 
+// **ROUTES**
 
-//main route to redirect to rendered react app
-app.get("/", function(req, res) {
+//show main
+app.get('/', function(req, res) {
 	res.sendFile(__dirname + "/public/index.html");
 });
 
+//get saved
+app.get('/api/saved', function(req, res) {
+  Article.find({}).exec(function(err, doc) {
+	if (err) { 
+	  console.log(err);
+	} else {
+		res.send(doc);
+	}
+  });
+});
 
+//post saved
+app.post('/api/saved', function(req, res) {
+  Article.create({
+	title: req.body.article.title,
+	date: req.body.article.date,
+	url: req.body.article.turl,
+  }, function(err) {
+	if (err) {
+	  console.log(err);
+	} else {
+	  res.send("Saved Article");
+  }
+  });
+});
 
+//delete saved
+app.delete('/api/saved', function(req, res) {
+  Article.remove({
+	_id: req.body.article._id
+  }, function(err) {
+	if (err) {
+	  console.log(err);
+	} else {
+	  res.send("Deleted Article");
+	}
+  });
+});
 
-app.listen(PORT, function() {
-	console.log("App listening on PORT: " + PORT);
-})
-
+app.listen(process.env.PORT || 3000, function() {
+  console.log("App running on port 3000!");
+});

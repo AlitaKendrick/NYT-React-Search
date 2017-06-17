@@ -1,9 +1,11 @@
-//include main react dependencies 
 var React = require("react");
 var ReactDOM = require("react-dom");
 
-//add in main parent component 
-// var X = require("./components/");
+//bring in components
+var Main = require("./components/Main");
+var Saved = require("./components/children/Saved");
+var Search = require("./components/children/Search");
 
-//add code to render main component here 
-// ReactDOM.render( , document.getElementById("app"));
+ReactDOM.render(<div className="main-container"> <Main /> </div>,
+ document.getElementById("app")
+);
