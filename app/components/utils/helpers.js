@@ -9,7 +9,7 @@ var helper = {
 
     var url = "https://api.nytimes.com/svc/search/v2/articlesearch.json";
     url += '?' + $.param({
-        'api-key': "97465cece832491fa3bc26a21108435b",
+        'api-key': "b9f91d369ff59547cd47b931d8cbc56b:0:74623931",
         'q': topic,
         'begin_date': yearStart + "0101",
         'end_date': yearEnd + "0101",
@@ -19,38 +19,24 @@ var helper = {
     return axios.get(url).then(function(response) {
       var returnedArticles = response.data.response.docs;
       var articleArray = [];
-      //If we get a result, return the result's
-      if (returnedArticles) {
-        //loop through returned array and build article objects
+            if (returnedArticles) {
         for (var i = 0; i < 5; i++) {
           var articleObject = {
              title: returnedArticles[i].headline.main,
              date: returnedArticles[i].pub_date,
              turl: returnedArticles[i].web_url
           }
-          //push article object to array to pass along for use
-          articleArray.push(articleObject);
+           articleArray.push(articleObject);
 
-        }
-        //return the array of objects
-        return articleArray;
-      }
-      // If we don't get any results, return an empty string
-      return "";
+        }    return articleArray;
+      }    return "";
     });
-  },
-
-  // This function retrieves the saved articles in the DB
-  getSavedArticles: function() {
+  },  getSavedArticles: function() {
     return axios.get("/api/saved");
   },
-
-  // This function posts articles to the DB for the saved list
   postSavedArticles: function(article) {
     return axios.post("/api/saved", { article: article });
   },
-
-  //This function is used to delete an articles from being saved
   deleteSavedArticle: function(article) {
     return axios.delete("/api/saved", { data: {article: article }});
   }
