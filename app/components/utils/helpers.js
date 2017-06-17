@@ -7,7 +7,6 @@ var helper = {
         'q': topic,
         'begin_date': yearStart + "0101",
         'end_date': yearEnd + "0101",
-        'page': 1
     });
 
     return axios.get(url).then(function(response) {
